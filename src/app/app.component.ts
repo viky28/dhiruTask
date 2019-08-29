@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -15,12 +15,16 @@ export class AppComponent implements OnInit {
     return this.form.get('contacts') as FormArray;
   }
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder) {
+    
+  }
 
   ngOnInit() {
     this.form = this.fb.group({
-      name: [null],
-      organization: [null],
+      userFormData: this.fb.group({
+        name:[''],
+        organization:[''],
+      }),
       contacts: this.fb.array([this.createContact()])
     });
 
@@ -31,7 +35,7 @@ export class AppComponent implements OnInit {
   // contact formgroup
   createContact(): FormGroup {
     return this.fb.group({
-      name: [null], // i.e. Home, Office
+      key: [null], // i.e. Home, Office
       value: [null]
     });
   }
@@ -47,35 +51,13 @@ export class AppComponent implements OnInit {
     this.contactList.removeAt(index);
   }
 
-  // triggered to change validation of value field type
-  // changedFieldType(index) {
-  //   let validators = null;
-
-  //   if (this.getContactsFormGroup(index).controls['type'].value === 'email') {
-  //     validators = Validators.compose([Validators.required, Validators.email]);
-  //   } else {
-  //     validators = Validators.compose([
-  //       Validators.required,
-  //       Validators.pattern(new RegExp('^\\+[0-9]?()[0-9](\\d[0-9]{9})$')) // pattern for validating international phone number
-  //     ]);
-  //   }
-
-  //   this.getContactsFormGroup(index).controls['value'].setValidators(
-  //     validators
-  //   );
-
-  //   this.getContactsFormGroup(index).controls['value'].updateValueAndValidity();
-  // }
-
-  // get the formgroup under contacts form array
-  // getContactsFormGroup(index): FormGroup {
-  //   // this.contactList = this.form.get('contacts') as FormArray;
-  //   const formGroup = this.contactList.controls[index] as FormGroup;
-  //   return formGroup;
-  // }
-
   // method triggered when form is submitted
   submit() {
-    console.log(this.form.value);
+    let data = {
+      name:this.form.value.userFormData.name,
+      organization:this.form.value.userFormData.organization,
+      contacts:this.form.value.contacts
+    }
+    console.log(data);
   }
 }
